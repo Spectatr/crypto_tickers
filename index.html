@@ -1,0 +1,380 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="manifest" href="/manifest.json">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-xs-center">
+            <div class="col-sm-3"></div>
+            <div class="col-xs-12 col-sm-6">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Exchange</th>
+                            <th scope="col">BTC</th>
+                            <th scope="col">LTC</th>
+                            <th scope="col">ETH</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">GDAX</th>
+                            <td>
+                                <div style="padding-left:2px" id="gdax_btc">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="gdax_ltc">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="gdax_eth">-</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Bitfinex</th>
+                            <td>
+                                <div style="padding-left:2px" id="bitfinex_btc">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="bitfinex_ltc">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="bitfinex_eth">-</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
+        <div class="row justify-content-xs-center">
+            <div class="col-sm-3"></div>
+            <div class="col-xs-12 col-sm-6">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Binance</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">24h Change</th>
+                            <th scope="col">24h High</th>
+                            <th scope="col">24h Low</th>
+                            <th scope="col">24h Vol</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row"><img src="https://files.coinmarketcap.com/static/img/coins/32x32/funfair.png"> FUN (FunFair)</th>
+                            <td>
+                                <div style="padding-left:2px" id="binance_fun">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_fun_24percent">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_fun_high">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_fun_low">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_fun_vol">-</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><img src="https://files.coinmarketcap.com/static/img/coins/32x32/icon.png"> ICX (ICON)</th>
+                            <td>
+                                <div style="padding-left:2px" id="binance_icx">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_icx_24percent">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_icx_high">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_icx_low">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_icx_vol">-</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><img src="https://files.coinmarketcap.com/static/img/coins/32x32/litecoin.png"> LTC (Litecoin)</th>
+                            <td>
+                                <div style="padding-left:2px" id="binance_ltc">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_ltc_24percent">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_ltc_high">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_ltc_low">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_ltc_vol">-</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><img src="https://files.coinmarketcap.com/static/img/coins/32x32/vechain.png"> VEN (Vechain)</th>
+                            <td>
+                                <div style="padding-left:2px" id="binance_ven">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_ven_24percent">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_ven_high">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_ven_low">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_ven_vol">-</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><img src="https://files.coinmarketcap.com/static/img/coins/32x32/stellar.png"> XLM (Stellar)</th>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xlm">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xlm_24percent">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xlm_high">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xlm_low">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xlm_vol">-</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><img src="https://files.coinmarketcap.com/static/img/coins/32x32/ripple.png"> XRP (Ripple)</th>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xrp">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xrp_24percent">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xrp_high">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xrp_low">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xrp_vol">-</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><img src="https://files.coinmarketcap.com/static/img/coins/32x32/verge.png"> XVG (Verge)</th>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xvg">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xvg_24percent">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xvg_high">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xvg_low">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_xvg_vol">-</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-6"></div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <div class="col-sm-3"></div>
+            <span class="text-muted">Binance prices calculated using ETH orderbook and GDAX ETH/USD price.</span>
+        </div>
+    </footer>
+</body>
+
+</html>
+<script type="text/javascript">
+//globals
+var WebSocket = WebSocket || MozWebSocket;
+var gdax_ws = null;
+var bitfinex_ws = null;
+var bitfinex_id_map = {}
+var binance_trade_ws = null
+var binance_ticker_ws = null
+var gdax_eth_price = 0;
+const binance_coins = ["ltc", "fun", "xlm", "xrp", "xvg", "ven", "icx"]
+
+window.onload = function() {
+    connect()
+}
+
+function connect() {
+    gdax_ws = new WebSocket("wss://ws-feed.gdax.com");
+
+    bitfinex_ws = new WebSocket("wss://api.bitfinex.com/ws/2");
+
+    var binance_ws_address_trade = binance_coins.map(x => x + "eth@trade").join("/")
+    var binance_ws_address_ticker = binance_coins.map(x => x + "eth@ticker").join("/")
+    binance_trade_ws = new WebSocket("wss://stream.binance.com:9443/stream?streams=" + binance_ws_address_trade)
+    binance_ticker_ws = new WebSocket("wss://stream.binance.com:9443/stream?streams=" + binance_ws_address_ticker)
+
+    //ws onopen funcs
+    gdax_ws.onopen = function() {
+        subscribe_message = {
+            "type": "subscribe",
+            "product_ids": [
+                "ETH-USD",
+                "BTC-USD",
+                "LTC-USD"
+            ],
+            "channels": [{
+                "name": "ticker",
+                "product_ids": [
+                    "ETH-USD",
+                    "BTC-USD",
+                    "LTC-USD"
+                ]
+            }, ]
+        }
+        gdax_ws.send(JSON.stringify(subscribe_message))
+    };
+
+    bitfinex_ws.onopen = function() {
+        var subscribe_message = {
+            event: 'subscribe',
+            channel: 'ticker',
+            symbol: 'tBTCUSD'
+        }
+        bitfinex_ws.send(JSON.stringify(subscribe_message))
+        subscribe_message = {
+            event: 'subscribe',
+            channel: 'ticker',
+            symbol: 'tLTCUSD'
+        }
+        bitfinex_ws.send(JSON.stringify(subscribe_message))
+        subscribe_message = {
+            event: 'subscribe',
+            channel: 'ticker',
+            symbol: 'tETHUSD'
+        }
+        bitfinex_ws.send(JSON.stringify(subscribe_message))
+    };
+
+    //ws onmessage funcs
+    gdax_ws.onmessage = function(event) {
+        try {
+            var response = JSON.parse(event.data);
+            if (response.type == "ticker") {
+                var div = null;
+                var class_color = null;
+                var div = "gdax_" + response.product_id.substring(0, 3).toLowerCase();
+                if (response.product_id == "ETH-USD") {
+                    gdax_eth_price = response.price;
+                }
+                if (response.side == "buy")
+                    class_color = "btn-success";
+                else
+                    class_color = "btn-danger";
+                if (div) {
+                    document.getElementById(div).innerHTML = "$" + parseFloat(response.price).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+                    document.getElementById(div).className = class_color;
+                }
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    bitfinex_ws.onmessage = function(event) {
+        try {
+            var response = JSON.parse(event.data);
+            if (response.hasOwnProperty("event")) {
+                if (response.event == "subscribed") {
+                    bitfinex_id_map[response.chanId] = response.pair;
+                }
+                return
+            }
+            if (response[1] == "hb") return
+            var div = "bitfinex_" + bitfinex_id_map[response[0]].substring(0, 3).toLowerCase();
+            var price = response[1][6];
+            var bid = response[1][0];
+            var class_color = null;
+            if (price == bid)
+                class_color = "btn-success";
+            else
+                class_color = "btn-danger";
+            document.getElementById(div).innerHTML = "$" + price.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+            document.getElementById(div).className = class_color;
+        } catch (e) {
+            console.log(e)
+        }
+    };
+
+    binance_trade_ws.onmessage = function(event) {
+        try {
+            var response = JSON.parse(event.data);
+            var div = "binance_" + response.stream.substring(0, 3).toLowerCase();
+            response = response.data;
+            var fractionDigitNum = 4;
+            var price = response.p * gdax_eth_price;;
+            var maker = response.m;
+            var class_color = null;
+            if (!maker)
+                class_color = "btn-success";
+            else
+                class_color = "btn-danger";
+            document.getElementById(div).innerHTML = "$" + price.toLocaleString("en-US", { maximumFractionDigits: fractionDigitNum, minimumFractionDigits: fractionDigitNum });
+            document.getElementById(div).className = class_color;
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    binance_ticker_ws.onmessage = function(event) {
+        try {
+            var response = JSON.parse(event.data);
+            var div = "binance_" + response.stream.substring(0, 3).toLowerCase();
+            response = response.data;
+            var pricechange = response.P;
+            var high = response.h * gdax_eth_price;
+            var low = response.l * gdax_eth_price;
+            var vol = response.q;
+            var class_color = null;
+            if (pricechange >= 0)
+                class_color = "btn-success";
+            else
+                class_color = "btn-danger";
+            document.getElementById(div + "_24percent").innerHTML = parseFloat(pricechange).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 }) + "%";
+            document.getElementById(div + "_24percent").className = class_color;
+            document.getElementById(div + "_high").innerHTML = parseFloat(high).toLocaleString("en-US", { maximumFractionDigits: 4, minimumFractionDigits: 4 });
+            document.getElementById(div + "_low").innerHTML = parseFloat(low).toLocaleString("en-US", { maximumFractionDigits: 4, minimumFractionDigits: 4 });
+            document.getElementById(div + "_vol").innerHTML = parseFloat(vol).toLocaleString("en-US", { maximumFractionDigits: 0, minimumFractionDigits: 0 });
+        } catch (e) {
+            console.log("binance_" + JSON.parse(event.data).stream.substring(0, 3).toLowerCase());
+            conole.log(e)
+        }
+    };
+}
+</script>
+
