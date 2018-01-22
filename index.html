@@ -19,6 +19,7 @@
         <div class="row justify-content-xs-center">
             <div class="col-sm-3"></div>
             <div class="col-xs-12 col-sm-6">
+                <p id="error" style="display:none"></p>
                 <table class="table">
                     <thead class="thead-light">
                         <tr>
@@ -223,23 +224,49 @@ var bitfinex_id_map = {}
 var binance_trade_ws = null
 var binance_ticker_ws = null
 var gdax_eth_price = 0;
+var error_exchanges = new Set()
 const binance_coins = ["ltc", "fun", "xlm", "xrp", "xvg", "ven", "icx"]
+const error_message = " websocket closed, retrying in 3 seconds...";
 
 window.onload = function() {
-    connect()
+    connectAll()
 }
 
-function connect() {
+var update_errors = function(exchange) {
+    error_exchanges.delete(exchange)
+    if (error_exchanges.size == 0) {
+        document.getElementById("error").style.display = "none";
+    } else {
+        document.getElementById("error").innerHTML = Array.from(error_exchanges).join(", ") + error_message;
+    }
+};
+
+var ws_onclose = function(exchange) {
+    return function() {
+        error_exchanges.add(exchange)
+        document.getElementById("error").innerHTML = Array.from(error_exchanges).join(", ") + error_message;
+        document.getElementById("error").style.display = "block";
+        switch (exchange) {
+            case "GDAX":
+                setTimeout(connect_gdax, 3000);
+                break;
+            case "Bitfinex":
+                setTimeout(connect_bitfinex, 3000);
+                break;
+            case "Binance trade":
+                setTimeout(connect_binance_trade, 3000);
+                break;
+            case "Binance ticker":
+                setTimeout(connect_binance_ticker, 3000);
+                break;
+        }
+
+    }
+};
+
+function connect_gdax() {
     gdax_ws = new WebSocket("wss://ws-feed.gdax.com");
 
-    bitfinex_ws = new WebSocket("wss://api.bitfinex.com/ws/2");
-
-    var binance_ws_address_trade = binance_coins.map(x => x + "eth@trade").join("/")
-    var binance_ws_address_ticker = binance_coins.map(x => x + "eth@ticker").join("/")
-    binance_trade_ws = new WebSocket("wss://stream.binance.com:9443/stream?streams=" + binance_ws_address_trade)
-    binance_ticker_ws = new WebSocket("wss://stream.binance.com:9443/stream?streams=" + binance_ws_address_ticker)
-
-    //ws onopen funcs
     gdax_ws.onopen = function() {
         subscribe_message = {
             "type": "subscribe",
@@ -260,8 +287,38 @@ function connect() {
         gdax_ws.send(JSON.stringify(subscribe_message))
     };
 
+    gdax_ws.onmessage = function(event) {
+        try {
+            update_errors("GDAX")
+            let response = JSON.parse(event.data);
+            if (response.type == "ticker") {
+                let class_color = null;
+                let div = "gdax_" + response.product_id.substring(0, 3).toLowerCase();
+                if (response.product_id == "ETH-USD") {
+                    gdax_eth_price = response.price;
+                }
+                if (response.side == "buy")
+                    class_color = "btn-success";
+                else
+                    class_color = "btn-danger";
+                if (div) {
+                    document.getElementById(div).innerHTML = "$" + parseFloat(response.price).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+                    document.getElementById(div).className = class_color;
+                }
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    gdax_ws.onclose = ws_onclose("GDAX");
+}
+
+function connect_bitfinex() {
+    bitfinex_ws = new WebSocket("wss://api.bitfinex.com/ws/2");
+
     bitfinex_ws.onopen = function() {
-        var subscribe_message = {
+        let subscribe_message = {
             event: 'subscribe',
             channel: 'ticker',
             symbol: 'tBTCUSD'
@@ -281,34 +338,10 @@ function connect() {
         bitfinex_ws.send(JSON.stringify(subscribe_message))
     };
 
-    //ws onmessage funcs
-    gdax_ws.onmessage = function(event) {
-        try {
-            var response = JSON.parse(event.data);
-            if (response.type == "ticker") {
-                var div = null;
-                var class_color = null;
-                var div = "gdax_" + response.product_id.substring(0, 3).toLowerCase();
-                if (response.product_id == "ETH-USD") {
-                    gdax_eth_price = response.price;
-                }
-                if (response.side == "buy")
-                    class_color = "btn-success";
-                else
-                    class_color = "btn-danger";
-                if (div) {
-                    document.getElementById(div).innerHTML = "$" + parseFloat(response.price).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
-                    document.getElementById(div).className = class_color;
-                }
-            }
-        } catch (e) {
-            console.log(e);
-        }
-    };
-
     bitfinex_ws.onmessage = function(event) {
         try {
-            var response = JSON.parse(event.data);
+            update_errors("Bitfinex")
+            let response = JSON.parse(event.data);
             if (response.hasOwnProperty("event")) {
                 if (response.event == "subscribed") {
                     bitfinex_id_map[response.chanId] = response.pair;
@@ -316,10 +349,10 @@ function connect() {
                 return
             }
             if (response[1] == "hb") return
-            var div = "bitfinex_" + bitfinex_id_map[response[0]].substring(0, 3).toLowerCase();
-            var price = response[1][6];
-            var bid = response[1][0];
-            var class_color = null;
+            let div = "bitfinex_" + bitfinex_id_map[response[0]].substring(0, 3).toLowerCase();
+            let price = response[1][6];
+            let bid = response[1][0];
+            let class_color = null;
             if (price == bid)
                 class_color = "btn-success";
             else
@@ -331,15 +364,23 @@ function connect() {
         }
     };
 
+    bitfinex_ws.onclose = ws_onclose("Bitfinex");
+}
+
+function connect_binance_trade() {
+    let binance_ws_address_trade = binance_coins.map(x => x + "eth@trade").join("/");
+    binance_trade_ws = new WebSocket("wss://stream.binance.com:9443/stream?streams=" + binance_ws_address_trade);
+
     binance_trade_ws.onmessage = function(event) {
         try {
-            var response = JSON.parse(event.data);
-            var div = "binance_" + response.stream.substring(0, 3).toLowerCase();
+            update_errors("Binance trade")
+            let response = JSON.parse(event.data);
+            let div = "binance_" + response.stream.substring(0, 3).toLowerCase();
             response = response.data;
-            var fractionDigitNum = 4;
-            var price = response.p * gdax_eth_price;;
-            var maker = response.m;
-            var class_color = null;
+            let fractionDigitNum = 4;
+            let price = response.p * gdax_eth_price;;
+            let maker = response.m;
+            let class_color = null;
             if (!maker)
                 class_color = "btn-success";
             else
@@ -351,16 +392,24 @@ function connect() {
         }
     };
 
+    binance_trade_ws.onclose = ws_onclose("Binance trade");
+};
+
+function connect_binance_ticker() {
+    let binance_ws_address_ticker = binance_coins.map(x => x + "eth@ticker").join("/");
+    binance_ticker_ws = new WebSocket("wss://stream.binance.com:9443/stream?streams=" + binance_ws_address_ticker);
+
     binance_ticker_ws.onmessage = function(event) {
         try {
-            var response = JSON.parse(event.data);
-            var div = "binance_" + response.stream.substring(0, 3).toLowerCase();
+            update_errors("Binance ticker")
+            let response = JSON.parse(event.data);
+            let div = "binance_" + response.stream.substring(0, 3).toLowerCase();
             response = response.data;
-            var pricechange = response.P;
-            var high = response.h * gdax_eth_price;
-            var low = response.l * gdax_eth_price;
-            var vol = response.q;
-            var class_color = null;
+            let pricechange = response.P;
+            let high = response.h * gdax_eth_price;
+            let low = response.l * gdax_eth_price;
+            let vol = response.q;
+            let class_color = null;
             if (pricechange >= 0)
                 class_color = "btn-success";
             else
@@ -375,6 +424,14 @@ function connect() {
             conole.log(e)
         }
     };
+
+    binance_ticker_ws.onclose = ws_onclose("Binance ticker");
+};
+
+function connectAll() {
+    connect_gdax();
+    connect_bitfinex();
+    connect_binance_trade();
+    connect_binance_ticker();
 }
 </script>
-
