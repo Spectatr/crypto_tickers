@@ -1,0 +1,335 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="manifest" href="/manifest2.json">
+    <style>
+    html {
+        box-sizing: border-box;
+    }
+
+    *,
+    *::after,
+    *::before {
+        box-sizing: inherit;
+    }
+
+    *,
+    *:before,
+    *:after {
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    body {
+        margin: 0;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+    }
+
+    .row {
+        width: 100%;
+
+        background-color: #999;
+    }
+
+    .border-horizontal {
+        border-right: 3px solid rgba(255, 255, 255, 0.3) !important;
+        border-left: 3px solid rgba(255, 255, 255, 0.3) !important;
+    }
+
+    .ticker {
+        width: 100%;
+        height: 100%;
+        color: white;
+        margin: 0 auto;
+        border-spacing: 0;
+        border-collapse: collapse;
+        border-right: 3px solid transparent;
+    }
+
+    .ticker>tbody>tr>td:first-child {
+        text-align: center;
+        width: 30%;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-right: 3px transparent solid;
+        border-left: 3px transparent solid;
+    }
+
+    .box {
+        width: 100%;
+        text-align: right;
+        padding: 20px 50px 0 20px;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 10vw;
+    }
+
+    .box span {
+        position: relative;
+        align-items: center;
+        justify-content: center;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+        line-height: 1.75;
+    }
+
+    .price_up {
+        background-color: #008000;
+    }
+
+    .price_down {
+        background-color: #cc0000;
+    }
+
+    .crypto_icon {
+        width: 50%;
+    }
+
+    .left_col {
+        width: 25%;
+    }
+
+    #ethLogo {
+        width: 140px;
+        height: 140px;
+    }
+    </style>
+</head>
+
+<!-- crypto icons are from https://github.com/cjdowner/cryptocurrency-icons-->
+
+<body>
+    <div id="error"></div>
+    <div id="btc" class="row">
+        <table class="ticker">
+            <tr>
+                <td>
+                    <img class="crypto_icon" src="css/white/btc.svg">
+                </td>
+                <td>
+                    <div class="box">
+                        <span class="price" id="gdax_btc">--</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ltc" class="row">
+        <table class="ticker">
+            <tr>
+                <td>
+                    <img class="crypto_icon" src="css/white/ltc.svg">
+                </td>
+                <td>
+                    <div class="box">
+                        <span class="price" id="gdax_ltc">--</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="eth" class="row">
+        <table class="ticker">
+            <tr>
+                <td>
+                    <img class="crypto_icon" src="css/white/eth.svg">
+                </td>
+                <td>
+                    <div class="box">
+                        <span class="price" id="gdax_eth">--</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="fun" class="row">
+        <table class="ticker">
+            <tr>
+                <td>
+                    <img class="crypto_icon" src="css/white/fun.svg">
+                </td>
+                <td>
+                    <div class="box">
+                        <span class="price" id="binance_fun">--</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ven" class="row">
+        <table class="ticker">
+            <tr>
+                <td>
+                    <img class="crypto_icon" src="css/white/ven.svg">
+                </td>
+                <td>
+                    <div class="box">
+                        <span class="price" id="binance_ven">--</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="icx" class="row">
+        <table class="ticker">
+            <tr>
+                <td>
+                    <img class="crypto_icon" src="css/white/icx.svg">
+                </td>
+                <td>
+                    <div class="box">
+                        <span class="price" id="binance_icx">--</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="xrp" class="row">
+        <table class="ticker">
+            <tr>
+                <td>
+                    <img class="crypto_icon" src="css/white/xrp.svg">
+                </td>
+                <td>
+                    <div class="box">
+                        <span class="price" id="binance_xrp">--</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript">
+//globals
+var WebSocket = WebSocket || MozWebSocket;
+var gdax_ws = null;
+var binance_trade_ws = null
+var gdax_eth_price = 0;
+var error_exchanges = new Set()
+const binance_coins = ["fun", "ven", "icx", "xrp"]
+const error_message = " websocket closed, retrying in 3 seconds...";
+
+window.onload = function() {
+    connectAll()
+}
+
+var update_errors = function(exchange) {
+    error_exchanges.delete(exchange)
+    if (error_exchanges.size == 0) {
+        document.getElementById("error").style.display = "none";
+    } else {
+        document.getElementById("error").innerHTML = Array.from(error_exchanges).join(", ") + error_message;
+    }
+};
+
+var ws_onclose = function(exchange) {
+    return function() {
+        error_exchanges.add(exchange)
+        document.getElementById("error").innerHTML = Array.from(error_exchanges).join(", ") + error_message;
+        document.getElementById("error").style.display = "block";
+        switch (exchange) {
+            case "GDAX":
+                setTimeout(connect_gdax, 3000);
+                break;
+            case "Binance trade":
+                setTimeout(connect_binance_trade, 3000);
+                break;
+        }
+
+    }
+};
+
+function connect_gdax() {
+    gdax_ws = new WebSocket("wss://ws-feed.gdax.com");
+
+    gdax_ws.onopen = function() {
+        subscribe_message = {
+            "type": "subscribe",
+            "product_ids": [
+                "ETH-USD",
+                "BTC-USD",
+                "LTC-USD"
+            ],
+            "channels": [{
+                "name": "ticker",
+                "product_ids": [
+                    "ETH-USD",
+                    "BTC-USD",
+                    "LTC-USD"
+                ]
+            }, ]
+        }
+        gdax_ws.send(JSON.stringify(subscribe_message))
+    };
+
+    gdax_ws.onmessage = function(event) {
+        try {
+            update_errors("GDAX")
+            let response = JSON.parse(event.data);
+            if (response.type == "ticker") {
+                let class_color = null;
+                let coin = response.product_id.substring(0, 3).toLowerCase();
+                let div = "gdax_" + coin;
+                if (response.product_id == "ETH-USD") {
+                    gdax_eth_price = response.price;
+                }
+                if (response.side == "buy")
+                    class_color = "price_up";
+                else
+                    class_color = "price_down";
+                if (div) {
+                    document.getElementById(div).innerHTML = "$" + parseFloat(response.price).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+                    document.getElementById(coin).className = class_color + " row";
+                }
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    gdax_ws.onclose = ws_onclose("GDAX");
+};
+
+function connect_binance_trade() {
+    let binance_ws_address_trade = binance_coins.map(x => x + "eth@trade").join("/");
+    binance_trade_ws = new WebSocket("wss://stream.binance.com:9443/stream?streams=" + binance_ws_address_trade);
+
+    binance_trade_ws.onmessage = function(event) {
+        try {
+            update_errors("Binance trade")
+            let response = JSON.parse(event.data);
+            let coin = response.stream.substring(0, 3).toLowerCase();
+            let div = "binance_" + coin;
+            response = response.data;
+            let fractionDigitNum = 4;
+            let price = response.p * gdax_eth_price;;
+            let maker = response.m;
+            let class_color = null;
+            if (!maker)
+                class_color = "price_up";
+            else
+                class_color = "price_down";
+            document.getElementById(div).innerHTML = "$" + price.toLocaleString("en-US", { maximumFractionDigits: fractionDigitNum, minimumFractionDigits: fractionDigitNum });
+            document.getElementById(coin).className = class_color + " row";
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    binance_trade_ws.onclose = ws_onclose("Binance trade");
+};
+
+function connectAll() {
+    connect_gdax();
+    connect_binance_trade();
+}
+</script>
