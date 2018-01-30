@@ -12,6 +12,7 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <link rel="manifest" href="/manifest.json">
+    <title id = "title"></title>
 </head>
 
 <body>
@@ -220,12 +221,12 @@
 var WebSocket = WebSocket || MozWebSocket;
 var gdax_ws = null;
 var bitfinex_ws = null;
-var bitfinex_id_map = {}
-var binance_trade_ws = null
-var binance_ticker_ws = null
+var bitfinex_id_map = {};
+var binance_trade_ws = null;
+var binance_ticker_ws = null;
 var gdax_eth_price = 0;
-var error_exchanges = new Set()
-const binance_coins = ["ltc", "fun", "xlm", "xrp", "xvg", "ven", "icx"]
+var error_exchanges = new Set();
+const binance_coins = ["ltc", "fun", "xlm", "xrp", "xvg", "ven", "icx"];
 const error_message = " websocket closed, retrying in 3 seconds...";
 
 window.onload = function() {
@@ -296,6 +297,9 @@ function connect_gdax() {
                 let div = "gdax_" + response.product_id.substring(0, 3).toLowerCase();
                 if (response.product_id == "ETH-USD") {
                     gdax_eth_price = response.price;
+                }
+                else if (response.product_id == "BTC-USD") {
+                	document.getElementById("title").innerHTML = "$" + parseFloat(response.price).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 }) + " BTC-USD";
                 }
                 if (response.side == "buy")
                     class_color = "btn-success";
