@@ -152,34 +152,6 @@
             </tr>
         </table>
     </div>
-    <div id="ven" class="row">
-        <table class="ticker">
-            <tr>
-                <td>
-                    <img class="crypto_icon" src="css/cryptocurrency-icons/svg/white/ven.svg">
-                </td>
-                <td>
-                    <div class="box">
-                        <span id="binance_ven">--</span>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div id="icx" class="row">
-        <table class="ticker">
-            <tr>
-                <td>
-                    <img class="crypto_icon" src="css/cryptocurrency-icons/svg/white/icx.svg">
-                </td>
-                <td>
-                    <div class="box">
-                        <span id="binance_icx">--</span>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
     <div id="xrp" class="row">
         <table class="ticker">
             <tr>
@@ -189,6 +161,20 @@
                 <td>
                     <div class="box">
                         <span id="binance_xrp">--</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ven" class="row">
+        <table class="ticker">
+            <tr>
+                <td>
+                    <img class="crypto_icon" src="css/cryptocurrency-icons/svg/white/xlm.svg">
+                </td>
+                <td>
+                    <div class="box">
+                        <span id="binance_xlm">--</span>
                     </div>
                 </td>
             </tr>
@@ -238,7 +224,7 @@ var ws_onclose = function(exchange) {
 };
 
 function connect_gdax() {
-    gdax_ws = new WebSocket("wss://ws-feed.gdax.com");
+    gdax_ws = new WebSocket("wss://ws-feed.pro.coinbase.com");
 
     gdax_ws.onopen = function() {
         subscribe_message = {
