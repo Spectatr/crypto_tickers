@@ -166,15 +166,15 @@
             </tr>
         </table>
     </div>
-    <div id="ven" class="row">
+    <div id="dot" class="row">
         <table class="ticker">
             <tr>
                 <td>
-                    <img class="crypto_icon" src="css/cryptocurrency-icons/svg/white/xlm.svg">
+                    <img class="crypto_icon" src="css/cryptocurrency-icons/svg/white/dot.svg">
                 </td>
                 <td>
                     <div class="box">
-                        <span id="binance_xlm">--</span>
+                        <span id="binance_dot">--</span>
                     </div>
                 </td>
             </tr>
@@ -190,7 +190,7 @@ var gdax_ws = null;
 var binance_trade_ws = null
 var gdax_eth_price = 0;
 var error_exchanges = new Set()
-const binance_coins = ["fun", "ven", "icx", "xrp"]
+const binance_coins = ["fun", "xrp", "dot"]
 const error_message = " websocket closed, retrying in 3 seconds...";
 
 window.onload = function() {
@@ -275,7 +275,7 @@ function connect_gdax() {
 };
 
 function connect_binance_trade() {
-    let binance_ws_address_trade = binance_coins.map(x => x + "eth@trade").join("/");
+    let binance_ws_address_trade = binance_coins.map(x => x + "usdt@trade").join("/");
     binance_trade_ws = new WebSocket("wss://stream.binance.com:9443/stream?streams=" + binance_ws_address_trade);
 
     binance_trade_ws.onmessage = function(event) {
@@ -285,15 +285,14 @@ function connect_binance_trade() {
             let coin = response.stream.substring(0, 3).toLowerCase();
             let div = "binance_" + coin;
             response = response.data;
-            let fractionDigitNum = 4;
-            let price = response.p * gdax_eth_price;;
+            let price = parseFloat(response.p);
             let maker = response.m;
             let class_color = null;
             if (!maker)
                 class_color = "price_up";
             else
                 class_color = "price_down";
-            document.getElementById(div).innerHTML = "$" + price.toLocaleString("en-US", { maximumFractionDigits: fractionDigitNum, minimumFractionDigits: fractionDigitNum });
+            document.getElementById(div).innerHTML = "$" + price.toLocaleString("en-US", { maximumFractionDigits: 4, minimumFractionDigits: 4 });
             document.getElementById(coin).className = class_color + " row";
         } catch (e) {
             console.log(e);
