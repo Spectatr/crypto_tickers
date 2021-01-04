@@ -73,6 +73,24 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <th scope="row"><img src="css/cryptocurrency-icons/svg/icon/btc.svg"> BTC (Bitcoin)</th>
+                            <td>
+                                <div style="padding-left:2px" id="binance_btc">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_btc_24percent">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_btc_high">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_btc_low">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_btc_vol">-</div>
+                            </td>
+                        </tr>
+                        <tr>
                             <th scope="row"><img src="css/cryptocurrency-icons/svg/icon/doge.svg"> DOGE (Dogecoin)</th>
                             <td>
                                 <div style="padding-left:2px" id="binance_dog">-</div>
@@ -106,6 +124,24 @@
                             </td>
                             <td>
                                 <div style="padding-left:2px" id="binance_dot_vol">-</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><img src="css/cryptocurrency-icons/svg/icon/eth.svg"> ETH (Ethereum)</th>
+                            <td>
+                                <div style="padding-left:2px" id="binance_eth">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_eth_24percent">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_eth_high">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_eth_low">-</div>
+                            </td>
+                            <td>
+                                <div style="padding-left:2px" id="binance_eth_vol">-</div>
                             </td>
                         </tr>
                         <tr>
@@ -199,7 +235,7 @@ var binance_trade_ws = null;
 var binance_ticker_ws = null;
 var gdax_eth_price = 0;
 var error_exchanges = new Set();
-const binance_coins = ["ltc", "fun", "uni", "xrp", "dot", "doge"];
+const binance_coins = ["ltc", "fun", "uni", "xrp", "dot", "doge", "btc", "eth"];
 const error_message = " websocket closed, retrying in 3 seconds...";
 
 window.onload = function() {
