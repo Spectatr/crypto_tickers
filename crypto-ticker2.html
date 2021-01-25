@@ -293,7 +293,7 @@ function connect_binance_trade() {
             else
                 class_color = "price_down";
             document.getElementById(div).innerHTML = "$" + price.toLocaleString("en-US", { maximumFractionDigits: 4, minimumFractionDigits: 4 });
-            document.getElementById(coin).className = class_color + " row";
+            // document.getElementById(coin).className = class_color + " row";
         } catch (e) {
             console.log(e);
         }
